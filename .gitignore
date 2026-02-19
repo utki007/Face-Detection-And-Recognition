@@ -22,3 +22,6 @@ build/
 
 # Dataset (training images)
 data/dataset/
+
+# Trained model
+models/trainer.yml
