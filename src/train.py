@@ -35,8 +35,14 @@ def get_images_and_labels(path):
         user_id = int(os.path.split(image_path)[-1].split(".")[1])
         faces = detector.detectMultiScale(img_numpy)
 
-        for (x, y, w, h) in faces:
-            face_samples.append(img_numpy[y : y + h, x : x + w])
+        if len(faces) > 0:
+            for (x, y, w, h) in faces:
+                face_samples.append(img_numpy[y : y + h, x : x + w])
+                ids.append(user_id)
+        else:
+            # Dataset images from collect.py are already cropped face regions;
+            # the detector often finds no "face" in tight crops. Use whole image.
+            face_samples.append(img_numpy)
             ids.append(user_id)
 
     return face_samples, ids

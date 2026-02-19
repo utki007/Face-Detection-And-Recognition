@@ -46,7 +46,9 @@ def run():
     print(f"Registered as: {name}")
 
     count = 0
-    _assure_path_exists(DATASET_DIR)
+    # Ensure the dataset directory exists (not just its parent)
+    os.makedirs(DATASET_DIR, exist_ok=True)
+    print(f"Saving images to: {os.path.abspath(DATASET_DIR)}")
 
     # If overwriting this ID, remove all existing training photos for it
     existing = []
@@ -74,8 +76,10 @@ def run():
             cv2.rectangle(image_frame, (x - 50, y - 50), (x + w + 50, y + h + 50), (225, 0, 0), 2)
             count += 1
             img_path = os.path.join(DATASET_DIR, f"User.{face_id}.{count}.jpg")
-            cv2.imwrite(img_path, gray[y : y + h, x : x + w])
-            cv2.imshow("frame", image_frame)
+            if cv2.imwrite(img_path, gray[y : y + h, x : x + w]):
+                cv2.imshow("frame", image_frame)
+            else:
+                print(f"Warning: failed to save {img_path}")
 
         if cv2.waitKey(100) & 0xFF == EXIT_KEY or count >= MAX_SAMPLES:
             break
